@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const {errorHandler,notfound} = require('./middlerware/errorHandler')
 dotenv.config();
 const connectDb = require('./config/connectDb');
 const app = express();
@@ -13,6 +14,8 @@ app.get('/', (req, res) => {
 });
 app.use('/api/users', userRoutes);
 const port = process.env.PORT || 8088;
+app.use(notfound)
+app.use(errorHandler)
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
