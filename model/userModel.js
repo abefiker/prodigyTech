@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -18,7 +19,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    isAdming: {
+    isAdmin: {
+      // Fix the typo from 'isAdming' to 'isAdmin'
       type: Boolean,
       default: false,
     },
@@ -27,13 +29,14 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-userSchema.methods.comparePassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+
+userSchema.methods.comparePassword = async function(password) {
+  return bcrypt.compare(password, this.password);
 };
 userSchema.pre('save', async function save(next) {
   if (!this.isModified('password')) {
-    return next()
-  };
+    return next();
+  }
   try {
     this.password = await bcrypt.hash(this.password, 10);
     return next();
