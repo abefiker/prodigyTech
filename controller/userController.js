@@ -1,17 +1,22 @@
+const asyncHandler = require('../middleware/asynchandler');
 const User = require('../model/userModel');
-const asyncHandler = require('../middlerware/asyncHandler');
 
-const generateToken = require('../utils/generateToken');
+const generateToken = require('../util/generateToken');
+// @desc Auth user & get token
+// @route POST /api/users/login
+// @access Public
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Debugging log for input
+  if (!email || !password) {
+    res.status(400);
+    throw new Error('Please provide both email and password');
+  }
+
   const user = await User.findOne({ email });
 
-  console.log(user.email, ' user found'); // Debugging log when user is found
-  if (user && (await user.comparePassword(password))) {
-    generateToken(user._id, res);
-
+  if (user && (await user.matchPassword(password))) {
+    generateToken(res, user._id);
     res.status(200).json({
       _id: user._id,
       name: user.name,
@@ -23,17 +28,30 @@ const authUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid email or password');
   }
 });
+
+// @desc Register user
+// @route POST /api/users
+// @access Public
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
+
+  // Check if the user already exists
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
     res.status(400);
-    throw new Error('User already exists');
+    throw new Error('Email already exists');
   }
 
-  const user = await User.create({ name, email, password });
+  // Create user
+  const user = await User.create({
+    name,
+    email,
+    password, // The password will be hashed in the model
+  });
+
   if (user) {
-    generateToken(user._id, res);
+    generateToken(res, user._id);
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -45,4 +63,17 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid user data');
   }
 });
-module.exports = { authUser, registerUser };
+
+// @desc logout user / clear cookie
+// @route POST /api/users/logout
+// @access Private
+const logoutUser = asyncHandler(async (req, res) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+  res.status(200).json({
+    message: 'logout successful',
+  });
+});
+module.exports = {authUser,registerUser,logoutUser}
