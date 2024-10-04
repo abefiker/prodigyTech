@@ -1,7 +1,7 @@
-const asyncHandler = require('../middleware/asynchandler');
+const asyncHandler = require('../middlerware/asyncHandler');
 const User = require('../model/userModel');
 
-const generateToken = require('../util/generateToken');
+const generateToken = require('../utils/generateToken');
 // @desc Auth user & get token
 // @route POST /api/users/login
 // @access Public
@@ -76,4 +76,4 @@ const logoutUser = asyncHandler(async (req, res) => {
     message: 'logout successful',
   });
 });
-module.exports = {authUser,registerUser,logoutUser}
+module.exports = { authUser, registerUser, logoutUser };
