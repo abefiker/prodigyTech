@@ -1,16 +1,16 @@
-import { Badge, Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
-import { FaShoppingCart, FaUser } from 'react-icons/fa';
+import {  Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
+import { FaUser } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../slices/authSlice';
-import logo from '../assets/logo.png';
+import logo from '../assets/anchor.png';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { toast } from 'react-toastify';
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { cartItems } = useSelector((state) => state.cart);
+//   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
   const [logoutApiCall] = useLogoutMutation();
   const logoutHandler = async () => {
@@ -28,14 +28,14 @@ const Header = () => {
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>
-              <img src={logo} alt="ProShop" />
-              ProShop
+              <img src={logo} alt="Prodigy" />
+              Prodigy Tech
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls="basics-navbar-nav" />
           <Navbar.Collapse id="basics-navbar-nav">
             <Nav className="ms-auto">
-              <LinkContainer to="/cart">
+              {/* <LinkContainer to="/cart">
                 <Nav.Link>
                   <FaShoppingCart />
                   Cart
@@ -45,7 +45,7 @@ const Header = () => {
                     </Badge>
                   )}
                 </Nav.Link>
-              </LinkContainer>
+              </LinkContainer> */}
               {userInfo ? (
                 <NavDropdown title={userInfo.name} id="username">
                   <LinkContainer to="/profile">
